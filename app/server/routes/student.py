@@ -1,11 +1,12 @@
 from fastapi import APIRouter, Body
 from fastapi.encoders import jsonable_encoder
 from server.database import (
-    create_student, retrieve_students, retrieve_student, delete_student)
+    create_student, retrieve_students, retrieve_student, delete_student, update_student)
 from server.models.student import (
     SuccessResponseModel,
     StudentModel,
-    ErrorResponseModel
+    ErrorResponseModel,
+    UpdateStudentModel
 )
 
 router = APIRouter()
@@ -38,3 +39,12 @@ async def remove_student(id):
     if deleted_student:
         return SuccessResponseModel(f"Student with ID {id} removed.", "Student deleted successfully.")
     return ErrorResponseModel("An error occurred", 404, f"Student with id {id} doesn't exist")
+
+
+@router.put("/{id}")
+async def update_student_data(id: str, req: UpdateStudentModel = Body(...)):
+    req = {k: v for k, v in req.dict().items() if v is not None}
+    updated_student = await update_student(id, req)
+    if updated_student:
+        return SuccessResponseModel(f"Student with ID {id} updated.", "Student updated successfully.")
+    return ErrorResponseModel("An error occurred", 404, "There was an error updating this student")

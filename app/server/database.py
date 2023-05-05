@@ -51,3 +51,12 @@ async def delete_student(id: str):
     student = await student_collection.find_one({"_id": ObjectId(id)})
     if student:
         await student_collection.delete_one({"_id": ObjectId(id)})
+
+
+async def update_student(id: str, data: dict):
+    student = await student_collection.find_one({"_id": ObjectId(id)})
+    if student:
+        updated_student = await student_collection.update_one({"_id": ObjectId(id)}, {"$set": data})
+        if updated_student:
+            return True
+        return False
