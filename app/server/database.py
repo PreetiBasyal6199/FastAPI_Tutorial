@@ -43,4 +43,11 @@ async def retrieve_students() -> list:
 
 async def retrieve_student(id: str) -> dict:
     student = await student_collection.find_one({"_id": ObjectId(id)})
-    return student_helper(student)
+    if student:
+        return student_helper(student)
+
+
+async def delete_student(id: str):
+    student = await student_collection.find_one({"_id": ObjectId(id)})
+    if student:
+        await student_collection.delete_one({"_id": ObjectId(id)})
