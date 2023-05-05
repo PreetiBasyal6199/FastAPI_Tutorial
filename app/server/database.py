@@ -1,6 +1,7 @@
+import os
+
 import motor.motor_asyncio
 from bson.objectid import ObjectId
-import os
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -30,3 +31,16 @@ async def create_student(student_data: dict) -> dict:
     student = await student_collection.insert_one(student_data)
     new_student = await student_collection.find_one({"_id": student.inserted_id})
     return student_helper(new_student)
+
+
+# Retrieve all the students
+async def retrieve_students() -> list:
+    students = []
+    async for student in student_collection.find():
+        students.append(student_helper(student))
+    return students
+
+
+async def retrieve_student(id: str) -> dict:
+    student = await student_collection.find_one({"_id": ObjectId(id)})
+    return student_helper(student)
